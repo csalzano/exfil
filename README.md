@@ -10,7 +10,7 @@ Bash scripting that extracts production WordPress databases and updates their lo
 
 ## Sample Configuration File
 
-Create a file in the same directory as exfil.sh named "example.conf" and change all the example values to match your local and production environments.
+Create a file in the same directory as `exfil.sh` named `example.conf` and change all the example values to match your local and production environments.
 
 ```
 declare -A SITE=(

@@ -43,16 +43,47 @@ source "${site_name}.conf"
 
 # create the database backup on the server
 FILE="${SITE[local_mysql_database]}.sql"
-sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
-	mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
+if [ -z "${SITE[ssh_remote_key_file]}" ]
+then
+	echo "Using sshpass"
+
+	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
+		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
 EOF
 
-# download the .sql payload
-sshpass -p "${SITE[sftp_password]}" scp -P "${SITE[sftp_port]}" "${SITE[sftp_user_at_host]}":"${SITE[sftp_path]}${FILE}" "${SITE[local_path]}"
+	# download the .sql payload
+	echo "Downloading .sql file..."
+	sshpass -p "${SITE[ssh_password]}" scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[sftp_path]}${FILE}" "${SITE[local_path]}"
 
-# delete the .sql payload from the server
-sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[sftp_path]}${FILE}"
+	# delete the .sql payload from the server
+	echo "Deleting .sql file from server..."
+	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[sftp_path]}${FILE}"
+else
+	# can't automate this unless we track the password on the key
+	# ssh-add /Users/Pryania/Remote/"${SITE[ssh_remote_key_file]}"
 
+	echo "Using SSH key pair"
+
+	ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
+		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
+EEOF
+
+	# download the .sql payload
+	echo "Downloading .sql file..."
+	scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[sftp_path]}${FILE}" "${SITE[local_path]}"
+
+	# delete the .sql payload from the server
+	echo "Deleting .sql file from server..."
+	ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[sftp_path]}${FILE}"
+fi
+
+
+
+# if local file does not exist, do not continue
+if [ ! -f "${SITE[local_path]}${FILE}" ]; then
+	echo ".sql file download failed, aborting"
+	exit
+fi
 
 # ALTER FILE AND EXECUTE
 
@@ -104,8 +135,8 @@ echo "Delete local .sql files? (y/n)"
 read delete_sql_files
 if [ "y" = delete_sql_files ]
 then
-	rm -f $FILE
-	rm -f $FILE".backup.txt"
+	rm -f "${SITE[local_path]}${FILE}"
+	rm -f "${SITE[local_path]}${FILE}.backup.txt"
 fi
 
 #TODO disable all gravity forms notifications & feeds

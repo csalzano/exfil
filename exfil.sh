@@ -45,7 +45,7 @@ source "${site_name}.conf"
 FILE="${SITE[local_mysql_database]}.sql"
 if [ -z "${SITE[ssh_remote_key_file]}" ]
 then
-	echo "Using sshpass"
+	echo "Exporting database..."
 
 	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
 		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
@@ -60,9 +60,9 @@ EOF
 	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[sftp_path]}${FILE}"
 else
 	# can't automate this unless we track the password on the key
-	# ssh-add /Users/Pryania/Remote/"${SITE[ssh_remote_key_file]}"
+	# ssh-add /Users/{user-name}/{...}/"${SITE[ssh_remote_key_file]}"
 
-	echo "Using SSH key pair"
+	echo "Exporting database..."
 
 	ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
 		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
@@ -81,9 +81,11 @@ fi
 
 # if local file does not exist, do not continue
 if [ ! -f "${SITE[local_path]}${FILE}" ]; then
-	echo ".sql file download failed, aborting"
+	echo "Local .sql file not found, aborting"
 	exit
 fi
+
+
 
 # ALTER FILE AND EXECUTE
 

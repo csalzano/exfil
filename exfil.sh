@@ -1,6 +1,6 @@
 #!/usr/local/bin/bash
-
-
+#
+#
 #		    .-''-.   _____     __   ________ .-./`)   .---.
 #		  .'_ _   \  \   _\   /  / |        |\ .-.')  | ,_|
 #		 / ( ` )   ' .-./ ). /  '  |   .----'/ `-' \,-./  )
@@ -15,6 +15,9 @@
 #
 #       is a program that extracts production WordPress databases and updates
 #       their local versions in my computer
+#
+#		version 1.0.0
+#
 
 
 
@@ -53,11 +56,11 @@ EOF
 
 	# download the .sql payload
 	echo "Downloading .sql file..."
-	sshpass -p "${SITE[ssh_password]}" scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[sftp_path]}${FILE}" "${SITE[local_path]}"
+	sshpass -p "${SITE[ssh_password]}" scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_root_path]}${FILE}" "${SITE[local_path]}"
 
 	# delete the .sql payload from the server
 	echo "Deleting .sql file from server..."
-	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[sftp_path]}${FILE}"
+	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 else
 	# can't automate this unless we track the password on the key
 	# ssh-add /Users/{user-name}/{...}/"${SITE[ssh_remote_key_file]}"
@@ -70,11 +73,11 @@ EEOF
 
 	# download the .sql payload
 	echo "Downloading .sql file..."
-	scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[sftp_path]}${FILE}" "${SITE[local_path]}"
+	scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_root_path]}${FILE}" "${SITE[local_path]}"
 
 	# delete the .sql payload from the server
 	echo "Deleting .sql file from server..."
-	ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[sftp_path]}${FILE}"
+	ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 fi
 
 

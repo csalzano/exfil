@@ -1,6 +1,6 @@
 # exfil
 
-Bash scripting that extracts production WordPress databases and updates their local versions in my computer. Requires bash version 5.
+Bash scripting that extracts production WordPress websites and updates their local versions in my computer. Requires bash version 5.
 
 ## How to Use
 
@@ -44,6 +44,10 @@ export SSHPASS="${SITE[ssh_password]}"
 This script supports both password and public key SSH authentication. To use a password, provide it in `ssh_password`. Register an SSH private key file using a command like `ssh-add /Users/{user-name}/{...}/privatekeyfilename` before running exfil, and provide the private key file name in `ssh_remote_key_file`.
 
 ## changelog
+
+### 1.1.0
+
+- __Added__ Now downloads the `wp-content` directory
 
 ### 1.0.1
 

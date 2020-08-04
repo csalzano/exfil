@@ -16,7 +16,7 @@
 #       is a program that extracts production WordPress databases and updates
 #       their local versions in my computer
 #
-#		version 1.0.1
+#		version 1.1.0
 #
 
 
@@ -61,6 +61,11 @@ EOF
 	# delete the .sql payload from the server
 	echo "Deleting .sql file from server..."
 	sshpass -e ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
+
+	# download the wp-content folder
+	echo "Downloading the wp-content folder..."
+	sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+
 else
 	# can't automate this unless we track the password on the key
 	# ssh-add /Users/{user-name}/{...}/"${SITE[ssh_remote_key_file]}"
@@ -78,9 +83,11 @@ EEOF
 	# delete the .sql payload from the server
 	echo "Deleting .sql file from server..."
 	ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
+
+	# download the wp-content folder
+	echo "Downloading the wp-content folder..."
+	scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
 fi
-
-
 
 # if local file does not exist, do not continue
 if [ ! -f "${SITE[local_path]}${FILE}" ]; then

@@ -45,6 +45,10 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.0.1
+
+- __Fixed__ Edits all `ssh` commands to add option `-o StrictHostKeyChecking=no`. This prevents the prompt `Are you sure you want to continue connecting (yes/no)?` from disrupting the first call to `ssh`. I had been manually connecting with `ssh` prior to using this script to answer yes to the prompt, and this version eliminates that step by always trusting the host keys.
+
 ### 1.0.0
 
 First version that supports both SSH password and public key authentication methods.

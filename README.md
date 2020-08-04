@@ -7,7 +7,7 @@ Bash scripting that extracts production WordPress websites and updates their loc
 ### Dependencies
 
 1. Requires bash 5
-1. Requires sshpass to use ssh passwords instead of key files.
+1. Requires sshpass if you choose to use ssh passwords instead of key files.
 
 ### Instructions
 

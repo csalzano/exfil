@@ -16,13 +16,13 @@
 #       is a program that extracts production WordPress databases and updates
 #       their local versions in my computer
 #
-#		version 1.0.0
+#		version 1.0.1
 #
 
 
 
 # Requires bash 5
-echo "Bash version $BASH_VERSION"
+echo "Requires bash 5. Bash version = $BASH_VERSION"
 
 # ask the user to type in a site name
 echo "exfil replaces the local copy of a WordPress database with fresh production data."
@@ -50,7 +50,7 @@ if [ -z "${SITE[ssh_remote_key_file]}" ]
 then
 	echo "Exporting database..."
 
-	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
+	sshpass -e ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
 		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
 EOF
 
@@ -60,14 +60,14 @@ EOF
 
 	# delete the .sql payload from the server
 	echo "Deleting .sql file from server..."
-	sshpass -e ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
+	sshpass -e ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 else
 	# can't automate this unless we track the password on the key
 	# ssh-add /Users/{user-name}/{...}/"${SITE[ssh_remote_key_file]}"
 
 	echo "Exporting database..."
 
-	ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
+	ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
 		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
 EEOF
 
@@ -77,7 +77,7 @@ EEOF
 
 	# delete the .sql payload from the server
 	echo "Deleting .sql file from server..."
-	ssh "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
+	ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 fi
 
 

@@ -1,11 +1,19 @@
 # exfil
 
-Bash scripting that extracts production WordPress websites and updates their local versions in my computer. Requires bash version 5.
+Bash scripting that extracts production WordPress websites and updates their local versions in my computer. Designed to run on a MacBook.
 
 ## How to Use
 
-1. Create a configuration file `example.conf` for each local and production website pair
-1. Navigate to the directory that contains `exfil.sh` and your configuration files at a command line
+### Dependencies
+
+1. Requires bash 5
+1. Requires sshpass to use ssh passwords instead of key files.
+
+### Instructions
+
+1. Download exfil.sh and this README.md file
+1. Create a configuration file `example.conf` for each local and production website pair. Use the sample below.
+1. Navigate to the directory that contains `exfil.sh` and your configuration files in Terminal
 1. Type `bash exfil.sh` or `bash exfil.sh example` to skip the prompt asking which configuration file should be loaded
 
 ## Sample Configuration File

@@ -53,6 +53,13 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.1.1
+
+- __Changed__ Now suppresses the server's welcome message during ssh connections for cleaner output
+- __Changed__ Skips loading plugins and themes when running [WP CLI](https://wp-cli.org/) commands for cleaner output
+- __Changed__ Downloading the wp-content folder is now optional
+- __Fixed__ The delete local .sql files feature now works
+
 ### 1.1.0
 
 - __Added__ Now downloads the `wp-content` directory

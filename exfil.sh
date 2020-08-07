@@ -16,7 +16,7 @@
 #       is a program that extracts production WordPress databases and updates
 #       their local versions in my computer
 #
-#		version 1.1.0
+#		version 1.1.1
 #
 
 
@@ -46,11 +46,14 @@ source "${site_name}.conf"
 
 # create the database backup on the server
 FILE="${SITE[local_mysql_database]}.sql"
-if [ -z "${SITE[ssh_remote_key_file]}" ]
+if [ -z "${SITE[ssh_remote_key_file]}" ] # Test if the lengh of STRING is zero (ie it is empty).
 then
 	echo "Exporting database..."
 
-	sshpass -e ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
+	# -o delivers option StrictHostKeyChecking=no to avoid a yes/no question and blindly trust the host's ssh key
+	# -q suppresses the server welcome message
+	# -p specifies the port number
+	sshpass -e ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
 		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
 EOF
 
@@ -62,9 +65,15 @@ EOF
 	echo "Deleting .sql file from server..."
 	sshpass -e ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 
-	# download the wp-content folder
-	echo "Downloading the wp-content folder..."
-	sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+	# maybe download the wp-content folder
+	echo "Download the wp-content folder? (y/n)"
+	read download_wp_content
+	if [ "y" == "$download_wp_content" ]
+	then
+		echo "Downloading the wp-content folder..."
+		sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+	fi
+
 
 else
 	# can't automate this unless we track the password on the key
@@ -72,7 +81,7 @@ else
 
 	echo "Exporting database..."
 
-	ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
+	ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
 		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
 EEOF
 
@@ -84,9 +93,14 @@ EEOF
 	echo "Deleting .sql file from server..."
 	ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 
-	# download the wp-content folder
-	echo "Downloading the wp-content folder..."
-	scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+	# maybe download the wp-content folder
+	echo "Download the wp-content folder? (y/n)"
+	read download_wp_content
+	if [ "y" == "$download_wp_content" ]
+	then
+		echo "Downloading the wp-content folder..."
+		scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+	fi
 fi
 
 # if local file does not exist, do not continue
@@ -136,8 +150,9 @@ COMMIT;
 EOFMYSQL
 
 # Use wp-cli to change admin email to me
-wp option update admin_email 'corey.salzano@gmail.com'
-wp option update new_admin_email 'corey.salzano@gmail.com'
+# Do not load plugins or themes to avoid debug message output
+wp option update admin_email 'corey.salzano@gmail.com' --skip-plugins --skip-themes
+wp option update new_admin_email 'corey.salzano@gmail.com' --skip-plugins --skip-themes
 
 # Move to the site folder before deletes
 cd "${SITE[local_path]}"
@@ -145,7 +160,7 @@ cd "${SITE[local_path]}"
 # Delete the local .sql files
 echo "Delete local .sql files? (y/n)"
 read delete_sql_files
-if [ "y" = delete_sql_files ]
+if [ "y" == "$delete_sql_files" ]
 then
 	rm -f "${SITE[local_path]}${FILE}"
 	rm -f "${SITE[local_path]}${FILE}.backup.txt"

@@ -116,21 +116,24 @@ fi
 # Move to the site folder
 cd "${SITE[local_path]}"
 
+
+# These next commands are commented because I've started using wp-cli to replace URLs and file paths below
+# The customizer settings sometimes contain URLs, and those are stored as serialized PHP, so a simple replace breaks the string length counts.
 # Replace domain in backup file
 #echo "Replacing ${SITE[production_domain]} with ${SITE[local_domain]} in $FILE..."
-LC_ALL=C sed -i '.backup.txt' "s|${SITE[production_domain]}|${SITE[local_domain]}|g" "$FILE"
+#LC_ALL=C sed -i '.backup.txt' "s|${SITE[production_domain]}|${SITE[local_domain]}|g" "$FILE"
 
 # Replace again for domains without :// prefixes
 #echo "Replacing ${SITE[production_domain]/:\/\//} with ${SITE[local_domain]/:\/\//} in $FILE..."
-LC_ALL=C sed -i '' "s|${SITE[production_domain]/:\/\//}|${SITE[local_domain]/:\/\//}|g" "$FILE"
+#LC_ALL=C sed -i '' "s|${SITE[production_domain]/:\/\//}|${SITE[local_domain]/:\/\//}|g" "$FILE"
 
 # Replace file path in backup file
 #echo "Replacing ${SITE[production_path]} with ${SITE[local_path]} in $FILE..."
-LC_ALL=C sed -i '' "s|${SITE[production_path]}|${SITE[local_path]}|g" "$FILE"
+#LC_ALL=C sed -i '' "s|${SITE[production_path]}|${SITE[local_path]}|g" "$FILE"
 
 # Replace again for slashes encoded as %2F
 #echo "Replacing ${SITE[production_path]/\//%2F} with ${SITE[local_path]/\//%2F} in $FILE..."
-LC_ALL=C sed -i '' "s|${SITE[production_path]/\//%2F}|${SITE[local_path]/\//%2F}|g" "$FILE"
+#LC_ALL=C sed -i '' "s|${SITE[production_path]/\//%2F}|${SITE[local_path]/\//%2F}|g" "$FILE"
 
 # Start the MySQL monitor
 # Drop all tables in the local database
@@ -149,10 +152,21 @@ source ${SITE[local_path]}$FILE;
 COMMIT;
 EOFMYSQL
 
-# Use wp-cli to change admin email to me
+# wp-cli, the WordPress Command Line Interface
+
+# Change admin email to me
 # Do not load plugins or themes to avoid debug message output
 wp option update admin_email 'corey.salzano@gmail.com' --skip-plugins --skip-themes
 wp option update new_admin_email 'corey.salzano@gmail.com' --skip-plugins --skip-themes
+
+# Replace site URLs from production to development
+wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}"
+# and file paths
+wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"
+
+
+
+
 
 # Move to the site folder before deletes
 cd "${SITE[local_path]}"

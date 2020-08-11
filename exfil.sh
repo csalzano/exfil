@@ -27,12 +27,13 @@ echo "Requires bash 5. Bash version = $BASH_VERSION"
 # Changes the admin email address so your local sites don't email anyone else
 development_email="corey.salzano@gmail.com"
 
-# ask the user to type in a site name
+
 echo "exfil replaces the local copy of a WordPress database with fresh production data."
 
 # perhaps a site name was passed as the first argument
 if [ -z "$1" ]
 then
+	# ask the user to type in a site name
 	echo "Which site would you like to sync?"
 	# TODO the available sites are...
 	read site_name
@@ -44,6 +45,15 @@ fi
 echo "Loading ${site_name}.conf..."
 source "${site_name}.conf"
 
+# Would you like to download any files?
+# n = No
+# t = Themes
+# p = Plugins
+# o = Themes & Plugins
+# u = Uploads
+# a = All of wp-content
+printf "Would you like to download any files?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\na = All of wp-content\n"
+read download_wp_content
 
 # CREATE & DOWNLOAD BACKUP
 
@@ -68,15 +78,35 @@ EOF
 	echo "Deleting .sql file from server..."
 	sshpass -e ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 
-	# maybe download the wp-content folder
-	echo "Download the wp-content folder? (y/n)"
-	read download_wp_content
-	if [ "y" == "$download_wp_content" ]
-	then
-		echo "Downloading the wp-content folder..."
-		sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
-	fi
+	# maybe download files
+	case $download_wp_content in
+		t)
+			echo "Downloading the wp-content/themes folder..."
+			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+		;;
+		
+		p) # Plugins
+			echo "Downloading the wp-content/plugins folder..."
+			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+		;;
 
+		o) # Themes & Plugins
+			echo "Downloading the wp-content/themes folder..."
+			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/plugins folder..."
+			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+		;;
+
+		u) # Uploads
+			echo "Downloading the wp-content/uploads folder..."
+			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+		;;
+
+		a) # All of wp-content
+			echo "Downloading the wp-content folder..."
+			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+		;;
+	esac
 
 else
 	# can't automate this unless we track the password on the key
@@ -96,14 +126,35 @@ EEOF
 	echo "Deleting .sql file from server..."
 	ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
 
-	# maybe download the wp-content folder
-	echo "Download the wp-content folder? (y/n)"
-	read download_wp_content
-	if [ "y" == "$download_wp_content" ]
-	then
-		echo "Downloading the wp-content folder..."
-		scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
-	fi
+	# maybe download files
+	case $download_wp_content in
+		t)
+			echo "Downloading the wp-content/themes folder..."
+			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+		;;
+		
+		p) # Plugins
+			echo "Downloading the wp-content/plugins folder..."
+			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+		;;
+
+		o) # Themes & Plugins
+			echo "Downloading the wp-content/themes folder..."
+			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/plugins folder..."
+			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+		;;
+
+		u) # Uploads
+			echo "Downloading the wp-content/uploads folder..."
+			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+		;;
+
+		a) # All of wp-content
+			echo "Downloading the wp-content folder..."
+			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+		;;
+	esac
 fi
 
 # if local file does not exist, do not continue

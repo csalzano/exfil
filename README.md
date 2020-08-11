@@ -57,7 +57,8 @@ This script supports both password and public key SSH authentication. To use a p
 ### 1.2.0
 
 - __Added__ Adds the GPL 2 license file
-_ __Added__ Adds instructions to change the email address used to overwrite the admin email
+- __Added__ Adds instructions to change the email address used to overwrite the admin email
+- __Changed__ Changes the file download feature to present a menu with five choices instead of just yes/no on the whole wp-content folder
 
 ### 1.1.1
 

@@ -16,7 +16,7 @@
 #       is a program that extracts production WordPress databases and updates
 #       their local versions in my computer
 #
-#		version 1.1.1
+#		version 1.2.0
 #
 
 
@@ -25,7 +25,7 @@
 echo "Requires bash 5. Bash version = $BASH_VERSION"
 
 # Changes the admin email address so your local sites don't email anyone else
-development_email="changeme@breakfastco.xyz"
+development_email="corey.salzano@gmail.com"
 
 # ask the user to type in a site name
 echo "exfil replaces the local copy of a WordPress database with fresh production data."
@@ -119,25 +119,6 @@ fi
 # Move to the site folder
 cd "${SITE[local_path]}"
 
-
-# These next commands are commented because I've started using wp-cli to replace URLs and file paths below
-# The customizer settings sometimes contain URLs, and those are stored as serialized PHP, so a simple replace breaks the string length counts.
-# Replace domain in backup file
-#echo "Replacing ${SITE[production_domain]} with ${SITE[local_domain]} in $FILE..."
-#LC_ALL=C sed -i '.backup.txt' "s|${SITE[production_domain]}|${SITE[local_domain]}|g" "$FILE"
-
-# Replace again for domains without :// prefixes
-#echo "Replacing ${SITE[production_domain]/:\/\//} with ${SITE[local_domain]/:\/\//} in $FILE..."
-#LC_ALL=C sed -i '' "s|${SITE[production_domain]/:\/\//}|${SITE[local_domain]/:\/\//}|g" "$FILE"
-
-# Replace file path in backup file
-#echo "Replacing ${SITE[production_path]} with ${SITE[local_path]} in $FILE..."
-#LC_ALL=C sed -i '' "s|${SITE[production_path]}|${SITE[local_path]}|g" "$FILE"
-
-# Replace again for slashes encoded as %2F
-#echo "Replacing ${SITE[production_path]/\//%2F} with ${SITE[local_path]/\//%2F} in $FILE..."
-#LC_ALL=C sed -i '' "s|${SITE[production_path]/\//%2F}|${SITE[local_path]/\//%2F}|g" "$FILE"
-
 # Start the MySQL monitor
 # Drop all tables in the local database
 # Run the file we've downloaded and modified
@@ -159,15 +140,13 @@ EOFMYSQL
 
 # Change admin email to me
 # Do not load plugins or themes to avoid debug message output
-wp option update admin_email "$(development_email}" --skip-plugins --skip-themes
-wp option update new_admin_email "$(development_email}" --skip-plugins --skip-themes
+wp option update admin_email "${development_email}" --skip-plugins --skip-themes
+wp option update new_admin_email "${development_email}" --skip-plugins --skip-themes
 
 # Replace site URLs from production to development
 wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}"
 # and file paths
 wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"
-
-
 
 
 

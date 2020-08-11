@@ -24,6 +24,9 @@
 # Requires bash 5
 echo "Requires bash 5. Bash version = $BASH_VERSION"
 
+# Changes the admin email address so your local sites don't email anyone else
+development_email="changeme@breakfastco.xyz"
+
 # ask the user to type in a site name
 echo "exfil replaces the local copy of a WordPress database with fresh production data."
 
@@ -156,8 +159,8 @@ EOFMYSQL
 
 # Change admin email to me
 # Do not load plugins or themes to avoid debug message output
-wp option update admin_email 'corey.salzano@gmail.com' --skip-plugins --skip-themes
-wp option update new_admin_email 'corey.salzano@gmail.com' --skip-plugins --skip-themes
+wp option update admin_email "$(development_email}" --skip-plugins --skip-themes
+wp option update new_admin_email "$(development_email}" --skip-plugins --skip-themes
 
 # Replace site URLs from production to development
 wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}"

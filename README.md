@@ -13,6 +13,7 @@ Bash scripting that extracts production WordPress websites and updates their loc
 
 1. Download exfil.sh and this README.md file
 1. Create a configuration file `example.conf` for each local and production website pair. Use the sample below.
+1. Change the email address on line 28 to your email address
 1. Navigate to the directory that contains `exfil.sh` and your configuration files in Terminal
 1. Type `bash exfil.sh` or `bash exfil.sh example` to skip the prompt asking which configuration file should be loaded
 
@@ -52,6 +53,11 @@ export SSHPASS="${SITE[ssh_password]}"
 This script supports both password and public key SSH authentication. To use a password, provide it in `ssh_password`. Register an SSH private key file using a command like `ssh-add /Users/{user-name}/{...}/privatekeyfilename` before running exfil, and provide the private key file name in `ssh_remote_key_file`.
 
 ## changelog
+
+### 1.2.0
+
+- __Added__ Adds the GPL 2 license file
+_ __Added__ Adds instructions to change the email address used to overwrite the admin email
 
 ### 1.1.1
 

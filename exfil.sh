@@ -42,7 +42,7 @@ else
 fi
 
 # do we even have a .conf file for the site name provided?
-if [ ! -f "{$site_name}.conf" ]
+if [ ! -f "${site_name}.conf" ]
 then
     echo "$site_name.conf not found, please check the spelling. Use the instructions in README.md to construct a conf file."
 	exit

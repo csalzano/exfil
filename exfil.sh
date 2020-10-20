@@ -16,7 +16,7 @@
 #       is a program that extracts production WordPress databases and updates
 #       their local versions in my computer
 #
-#		version 1.2.0
+#		version 1.2.1
 #
 
 
@@ -39,6 +39,13 @@ then
 	read site_name
 else
 	site_name=$1
+fi
+
+# do we even have a .conf file for the site name provided?
+if [ ! -f "{$site_name}.conf" ]
+then
+    echo "$site_name.conf not found, please check the spelling. Use the instructions in README.md to construct a conf file."
+	exit
 fi
 
 

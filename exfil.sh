@@ -59,7 +59,7 @@ read download_wp_content
 
 # create the database backup on the server
 FILE="${SITE[local_mysql_database]}.sql"
-if [ -z "${SITE[ssh_remote_key_file]}" ] # Test if the lengh of STRING is zero (ie it is empty).
+if [ -z "${SITE[ssh_remote_key_file]}" ] # Test if the length of STRING is zero (ie it is empty).
 then
 	echo "Exporting database..."
 

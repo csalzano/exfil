@@ -54,6 +54,10 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.2.1
+
+- __Fixed__ Now checks that the specified .conf file exists before trying to load it. If the file does not exist, delivers an error message and aborts the program.
+
 ### 1.2.0
 
 - __Added__ Adds the GPL 2 license file

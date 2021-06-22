@@ -20,7 +20,7 @@ Bash scripting that extracts production WordPress websites and updates their loc
 
 ## Sample Configuration File
 
-Create a file in the same directory as `exfil.sh` named `example.conf` and change all the example values to match your local and production environments.
+Create a file in the same directory as `exfil.sh` named `example.conf` and change all the example values to match your local and production environments. `production_root_path` is the user home directory you land in when connecting to the server via SSH, and it sometimes does not like a preceding slash.
 
 ```
 declare -A SITE=(

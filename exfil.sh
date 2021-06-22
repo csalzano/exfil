@@ -77,7 +77,7 @@ then
 	# -q suppresses the server welcome message
 	# -p specifies the port number
 	sshpass -e ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
-		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
+		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${SITE[production_root_path]}${FILE}"
 EOF
 
 	# download the .sql payload
@@ -125,7 +125,7 @@ else
 	echo "Exporting database..."
 
 	ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
-		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${FILE}"
+		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${SITE[production_root_path]}${FILE}"
 EEOF
 
 	# download the .sql payload

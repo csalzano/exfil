@@ -257,3 +257,11 @@ then
 
 	#TODO disable all gravity forms notifications & feeds
 fi
+
+# Is the SiteGround Optimizer plugin active?
+wp plugin is-active sg-cachepress
+if [ 0 == "$?" ]
+then
+	# Yes. Deactivate it, we do not want to run it locally
+	wp plugin deactivate sg-cachepress
+fi

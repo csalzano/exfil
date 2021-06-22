@@ -28,7 +28,7 @@ echo "Requires bash 5. Bash version = $BASH_VERSION"
 development_email="corey.salzano@gmail.com"
 
 
-echo "exfil replaces the local copy of a WordPress database with fresh production data."
+echo "exfil replaces the local copy of a WordPress database with fresh production data. Enter q at any prompt to quit."
 
 # perhaps a site name was passed as the first argument
 if [ -z "$1" ]
@@ -39,6 +39,12 @@ then
 	read site_name
 else
 	site_name=$1
+fi
+
+# check if the user wants to quit
+if [ "q" == "$site_name" ]
+then
+	exit
 fi
 
 # do we even have a .conf file for the site name provided?
@@ -62,8 +68,20 @@ source "${site_name}.conf"
 printf "Would you like to download any files?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\na = All of wp-content\n"
 read download_wp_content
 
+# check if the user wants to quit
+if [ "q" == "$download_wp_content" ]
+then
+	exit
+fi
+
 echo "Delete local .sql file after importing? (y/n)"
 read delete_sql_files
+
+# check if the user wants to quit
+if [ "q" == "$delete_sql_files" ]
+then
+	exit
+fi
 
 # CREATE & DOWNLOAD BACKUP
 

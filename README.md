@@ -16,6 +16,7 @@ Bash scripting that extracts production WordPress websites and updates their loc
 1. Change the email address on [line 28](https://github.com/csalzano/exfil/blob/master/exfil.sh#L28) to your email address
 1. Navigate to the directory that contains `exfil.sh` and your configuration files in Terminal
 1. Type `bash exfil.sh` or `bash exfil.sh example` to skip the prompt asking which configuration file should be loaded
+1. Enter `q` at any prompt to abort the program
 
 ## Sample Configuration File
 
@@ -53,6 +54,15 @@ export SSHPASS="${SITE[ssh_password]}"
 This script supports both password and public key SSH authentication. To use a password, provide it in `ssh_password`. Register an SSH private key file using a command like `ssh-add /Users/{user-name}/{...}/privatekeyfilename` before running exfil, and provide the private key file name in `ssh_remote_key_file`.
 
 ## changelog
+
+### 1.3.0
+
+- __Added__ Accepts `q` at any prompt to abort the program.
+- __Added__ If the Gravity Forms plugin is active, exfil now activates or installs and activates the [Power Boost for Gravity Forms](https://wordpress.org/plugins/power-boost-for-gravity-forms/) plugin.
+- __Added__ Deactivates SiteGround's [SG Optimizer](https://wordpress.org/plugins/sg-cachepress/) plugin if it is active.
+- __Added__ Installs and activates the [Stop Emails](https://wordpress.org/plugins/stop-emails/) plugin if it is not found to be active.
+- __Fixed__ Specify a full path when saving the .sql backup file on the server so we can predict where to find it.
+- __Changed__ Asks whether to delete the downloaded .sql file after importing it before starting the import. This puts all questions at the beginning, and lets the program exit instead of sitting on this question if the user turns their attention away while the import is running.
 
 ### 1.2.1
 

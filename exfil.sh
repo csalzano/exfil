@@ -265,3 +265,14 @@ then
 	# Yes. Deactivate it, we do not want to run it locally
 	wp plugin deactivate sg-cachepress
 fi
+
+# Is the Stop Emails plugin active?
+wp plugin is-installed stop-emails
+if [ 1 == "$?" ]
+then
+	# No.
+	wp plugin install stop-emails --activate
+else
+	# Yes. Activate it.
+	wp plugin activate stop-emails
+fi

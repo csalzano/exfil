@@ -62,6 +62,9 @@ source "${site_name}.conf"
 printf "Would you like to download any files?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\na = All of wp-content\n"
 read download_wp_content
 
+echo "Delete local .sql file after importing? (y/n)"
+read delete_sql_files
+
 # CREATE & DOWNLOAD BACKUP
 
 # create the database backup on the server
@@ -212,8 +215,6 @@ wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"
 cd "${SITE[local_path]}"
 
 # Delete the local .sql files
-echo "Delete local .sql files? (y/n)"
-read delete_sql_files
 if [ "y" == "$delete_sql_files" ]
 then
 	rm -f "${SITE[local_path]}${FILE}"

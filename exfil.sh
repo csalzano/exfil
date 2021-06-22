@@ -239,4 +239,21 @@ then
 	rm -f "${SITE[local_path]}${FILE}.backup.txt"
 fi
 
-#TODO disable all gravity forms notifications & feeds
+# Is the Gravity Forms plugin active?
+wp plugin is-active gravityforms
+if [ 0 == "$?" ]
+then
+	# Yes
+
+	# Is the Power Boost for Gravity Forms plugin installed?
+	wp plugin is-installed power-boost-for-gravity-forms
+	if [ 1 == "$?" ]
+	then
+		# No
+		wp plugin install power-boost-for-gravity-forms --activate
+	else
+		wp plugin activate power-boost-for-gravity-forms
+	fi
+
+	#TODO disable all gravity forms notifications & feeds
+fi

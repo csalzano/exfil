@@ -279,7 +279,7 @@ else
 fi
 
 # Does the site config have a script_after we need to run?
-if [ -v SITE[script_after] ] # "${SITE[local_path]}${FILE}"
+if [ -v SITE[script_after] ]
 then
 	echo "Running script_after: ${SITE[script_after]}"
 	eval ${SITE[script_after]}

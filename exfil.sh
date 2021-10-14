@@ -223,6 +223,7 @@ wp option update admin_email "${development_email}" --skip-plugins --skip-themes
 wp option update new_admin_email "${development_email}" --skip-plugins --skip-themes
 
 # Replace site URLs from production to development
+echo "Replacing ${SITE[production_domain]} with ${SITE[local_domain]}..."
 wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}"
 # and file paths
 wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"

@@ -45,6 +45,8 @@ declare -A SITE=(
 	[local_path]="/Users/user/Sites/example/"
 
 	[production_root_path]="/path/"
+
+	[script_after]=""
 )
 export SSHPASS="${SITE[ssh_password]}"
 ```
@@ -54,6 +56,10 @@ export SSHPASS="${SITE[ssh_password]}"
 This script supports both password and public key SSH authentication. To use a password, provide it in `ssh_password`. Register an SSH private key file using a command like `ssh-add /Users/{user-name}/{...}/privatekeyfilename` before running exfil, and provide the private key file name in `ssh_remote_key_file`.
 
 ## changelog
+
+### 1.4.0
+
+- __Added__ Adds a .conf file variable `script_after` to hold scripting that will be run in the local site's directory after the local site is updated.
 
 ### 1.3.0
 

@@ -16,7 +16,7 @@
 #       is a program that extracts production WordPress databases and updates
 #       their local versions in my computer
 #
-#		version 1.3.0
+#		version 1.4.0
 #
 
 

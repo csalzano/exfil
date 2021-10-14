@@ -20,7 +20,7 @@ Bash scripting that extracts production WordPress websites and updates their loc
 
 ## Sample Configuration File
 
-Create a file in the same directory as `exfil.sh` named `example.conf` and change all the example values to match your local and production environments. `production_root_path` is the user home directory you land in when connecting to the server via SSH, and it sometimes does not like a preceding slash.
+Create a file in the same directory as `exfil.sh` named `example.conf` and change all the example values to match your local and production environments. An explanation of each variable in the config file can be found below the sample.
 
 ```
 declare -A SITE=(
@@ -50,6 +50,25 @@ declare -A SITE=(
 )
 export SSHPASS="${SITE[ssh_password]}"
 ```
+
+#### Explanation of Config File Variables
+
+- __ssh_user_at_host__ The SSH user name and host separated by @. *user@example.com*
+- __ssh_port__ The port number where SSH is available. *58134*
+- __ssh_password__ The SSH user password. See SSH Authentication notes below. *o0o00oo0oo00o0o*
+- __ssh_remote_key_file__ The name of a file containing an SSH private key. SSH Authentication notes below. *example*
+- __production_mysql_database__ The name of the database on the remote server. *breakfastco*
+- __production_mysql_user__ The name of the user with permission to query the remote database. *user_name*
+- __production_mysql_password__ The remote database user's password. *66g6gggg6g66g*
+- __local_mysql_database__ The name of the database on the local server. *wp_breakfastco*
+- __local_mysql_user__ The name of the user with permission to query the local database. *root*
+- __local_mysql_password__ The local database user's password *root*
+- __production_domain__ The remote site's domain including subdomain and starting with `://`. Used to change all URLs stored in the database, including the siteurl in the options table. *://example.com*
+- __local_domain__ The local site's domain including subdomain. *://example.test*
+- __production_path__ Full path to the WordPress root folder on the remote server. */path/public_html/example.com/*
+- __local_path__ Full path to the WordPress root folder on the local server. */Users/user/Sites/example/*
+- __production_root_path__ Full path to the user's home directory we land in when connecting to the server via SSH. Sometimes does not like a preceding slash. */path/*
+- __script_after__ Optional. Script to run after the local copy of the site is updated. *wp user create corey csalzano@duck.com --role=administrator*
 
 ### SSH Authentication
 

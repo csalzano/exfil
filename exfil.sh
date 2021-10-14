@@ -25,7 +25,7 @@
 echo "Requires bash 5. Bash version = $BASH_VERSION"
 
 # Changes the admin email address so your local sites don't email anyone else
-development_email="corey.salzano@gmail.com"
+development_email="csalzano@duck.com"
 
 
 echo "exfil replaces the local copy of a WordPress database with fresh production data. Enter q at any prompt to quit."

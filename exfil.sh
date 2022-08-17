@@ -175,7 +175,7 @@ EEOF
 			echo "Downloading the wp-content/themes folder..."
 			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
 		;;
-		
+
 		p) # Plugins
 			echo "Downloading the wp-content/plugins folder..."
 			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"

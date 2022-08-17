@@ -76,6 +76,10 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.5.0
+
+- __Added__ Now checks for the WP Engine mysql.sql file when `mysqldump` fails
+
 ### 1.4.0
 
 - __Added__ Adds a .conf file variable `script_after` to hold scripting that will be run in the local site's directory after the local site is updated.

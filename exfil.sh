@@ -13,8 +13,7 @@
 #
 #		exfil
 #
-#       is a program that extracts production WordPress databases and updates
-#       their local versions in my computer
+#       extracts WordPress databases and files
 #
 #		version 1.4.0
 #
@@ -26,9 +25,11 @@ echo "Requires bash 5. Bash version = $BASH_VERSION"
 
 # Changes the admin email address so your local sites don't email anyone else
 development_email="csalzano@duck.com"
+# Change the email address with sed:
+# sed -i '' -e "s|csalzano@duck.com|youremail@example.com|g" exfil.sh
 
 
-echo "exfil replaces the local copy of a WordPress database with fresh production data. Enter q at any prompt to quit."
+echo "exfil updates local WordPress sites with fresh production data. Enter q at any prompt to quit."
 
 # perhaps a site name was passed as the first argument
 if [ -z "$1" ]
@@ -230,7 +231,7 @@ wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"
 
 
 
-# Move to the site folder before deletes
+# Move to the site folder
 cd "${SITE[local_path]}"
 
 # Delete the local .sql files

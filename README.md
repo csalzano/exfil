@@ -13,7 +13,7 @@ Bash scripting that extracts production WordPress websites and updates their loc
 
 1. [Download](https://github.com/csalzano/exfil/archive/master.zip) exfil.sh and this README.md file
 1. Create a configuration file `example.conf` for each local and production website pair. Use the sample file contents below.
-1. Change the email address on [line 28](https://github.com/csalzano/exfil/blob/master/exfil.sh#L28) to your email address
+1. Change the email address on [line 28](https://github.com/csalzano/exfil/blob/master/exfil.sh#L28) to your email address. Consider using a command like `sed -i '' -e "s|csalzano@duck.com|youremail@example.com|g" exfil.sh`
 1. Navigate to the directory that contains `exfil.sh` and your configuration files in Terminal
 1. Type `bash exfil.sh` or `bash exfil.sh example` to skip the prompt asking which configuration file should be loaded
 1. Enter `q` at any prompt to abort the program

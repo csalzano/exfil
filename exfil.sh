@@ -146,14 +146,28 @@ else
 	ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
 		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${SITE[production_root_path]}${FILE}"
 EEOF
+	# $? is the exit status of the most recently-executed command; by convention
+	# 0 means success and anything else indicates failure.
+	if [ "$?" -ne 0 ]; then
+		echo "mysqldump failed, looking for WP Engine file..."
 
-	# download the .sql payload
-	echo "Downloading .sql file..."
-	scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_root_path]}${FILE}" "${SITE[local_path]}"
+		scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/mysql.sql" "${SITE[local_path]}"
+		# did we get the WP Engine file?
+		if [ "$?" -eq 0 ]; then
+			# yes, rename it from mysql.sql to the file name we will use later
+			mv "${SITE[local_path]}mysql.sql" "${SITE[local_path]}${SITE[local_mysql_database]}.sql"
+		fi
+	else
+		echo "mysqldump success"
 
-	# delete the .sql payload from the server
-	echo "Deleting .sql file from server..."
-	ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
+		# download the .sql payload
+		echo "Downloading .sql file..."
+		scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_root_path]}${FILE}" "${SITE[local_path]}"
+
+		# delete the .sql payload from the server
+		echo "Deleting .sql file from server..."
+		ssh -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f ${SITE[production_root_path]}${FILE}"
+	fi
 
 	# maybe download files
 	case $download_wp_content in

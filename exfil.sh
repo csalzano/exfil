@@ -15,7 +15,7 @@
 #
 #       extracts WordPress databases and files
 #
-#		version 1.5.0
+#		version 1.6.0
 #
 
 
@@ -151,6 +151,14 @@ EOF
 		;;
 	esac
 
+	# Store $table_prefix for later
+	echo "Downloading \$table_prefix..."
+	TABLE_PREFIX=$(sshpass -e ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "
+		cd "${SITE[production_path]}"
+		wp db prefix
+	")
+	echo "\$table_prefix = '${TABLE_PREFIX}'"
+
 else
 	# can't automate this unless we track the password on the key
 	# ssh-add /Users/{user-name}/{...}/"${SITE[ssh_remote_key_file]}"
@@ -212,6 +220,14 @@ EEOF
 			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
 		;;
 	esac
+
+	# Store $table_prefix for later
+	echo "Downloading \$table_prefix..."
+	TABLE_PREFIX=$(ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "
+		cd "${SITE[production_path]}"
+		wp db prefix
+	")
+	echo "\$table_prefix = '${TABLE_PREFIX}'"
 fi
 
 # if local file does not exist, do not continue
@@ -226,6 +242,9 @@ fi
 
 # Move to the site folder
 cd "${SITE[local_path]}"
+
+# Stash the local $table_prefix before we wipe the database
+TABLE_PREFIX_LOCAL=$(wp db prefix)
 
 # Start the MySQL monitor
 # Drop all tables in the local database
@@ -245,6 +264,15 @@ COMMIT;
 EOFMYSQL
 
 # wp-cli, the WordPress Command Line Interface
+
+# Make sure the $table_prefix variable in wp-config.php is accurate
+if [ "${TABLE_PREFIX}" != "${TABLE_PREFIX_LOCAL}" ]
+then
+	echo "Changing \$table_prefix from '${TABLE_PREFIX_LOCAL}' to '${TABLE_PREFIX}'"
+	# Looks like $table_prefix = 'hif_';
+	sed -i '' "s/$table_prefix = '${TABLE_PREFIX_LOCAL}'/$table_prefix = '${TABLE_PREFIX}'/" wp-config.php
+	sed -i '' "s/$table_prefix = \"${TABLE_PREFIX_LOCAL}\"/$table_prefix = \"${TABLE_PREFIX}\"/" wp-config.php
+fi
 
 # Change admin email to me
 # Do not load plugins or themes to avoid debug message output

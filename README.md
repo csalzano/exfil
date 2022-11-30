@@ -76,6 +76,10 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.6.0
+
+- __Added__ Now detects a `$table_prefix` mismatch and edits the local `wp-config.php` to match remote
+
 ### 1.5.0
 
 - __Added__ Now checks for the WP Engine mysql.sql file when `mysqldump` fails

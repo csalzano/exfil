@@ -287,6 +287,24 @@ then
 	rm -f "${SITE[local_path]}${FILE}.backup.txt"
 fi
 
+# Are we loading plugins?
+if [ "o" == "$download_wp_content" ] || [ "p" == "$download_wp_content" ]
+then
+	# install all active plugins basd on the `active_plugins` option value
+	# that was just written to the database
+	wp option get active_plugins --format=json | php -r "foreach( json_decode( fgets(STDIN) ) as \$value ) { \$p=explode('/',\$value);fwrite(STDOUT, (is_array( \$p ) ? \$p[0] : \$p).PHP_EOL); }" | xargs -n1 bash -c '
+	VERSION=$(wp plugin get $0 --field=version --quiet)
+	echo "Trying to install ${0}"
+	if [ ${#VERSION} -gt 0 ]
+	then
+		echo "Specifying version ${VERSION}"
+		wp plugin install $0 --version=${VERSION}
+	else
+		echo "No version number found"
+		wp plugin install $0
+	fi'
+fi
+
 # Is the Gravity Forms plugin active?
 wp plugin is-active gravityforms
 if [ 0 == "$?" ]

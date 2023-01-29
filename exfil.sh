@@ -274,21 +274,11 @@ then
 	sed -i '' "s/$table_prefix = \"${TABLE_PREFIX_LOCAL}\"/$table_prefix = \"${TABLE_PREFIX}\"/" wp-config.php
 fi
 
-# Change admin email to me
-# Do not load plugins or themes to avoid debug message output
-wp option update admin_email "${development_email}" --skip-plugins --skip-themes
-wp option update new_admin_email "${development_email}" --skip-plugins --skip-themes
-
 # Replace site URLs from production to development
 echo "Replacing ${SITE[production_domain]} with ${SITE[local_domain]}..."
 wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}"
 # and file paths
 wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"
-
-
-
-# Move to the site folder
-cd "${SITE[local_path]}"
 
 # Delete the local .sql files
 if [ "y" == "$delete_sql_files" ]
@@ -341,3 +331,9 @@ then
 	echo "Running script_after: ${SITE[script_after]}"
 	eval ${SITE[script_after]}
 fi
+
+# Change admin email to me
+# Do not load plugins or themes to avoid debug message output
+# Waited to do this until after the stop-emails plugin is active
+wp option update admin_email "${development_email}" --skip-plugins --skip-themes
+wp option update new_admin_email "${development_email}" --skip-plugins --skip-themes

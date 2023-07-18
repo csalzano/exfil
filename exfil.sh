@@ -277,7 +277,15 @@ fi
 # Replace site URLs from production to development
 echo "Replacing ${SITE[production_domain]} with ${SITE[local_domain]}..."
 wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}"
+
+# Also replace www versions of the domains
+WWWPROD=${SITE[production_domain]//:\/\//:\/\/www.}
+WWWLOCAL=${SITE[local_domain]//:\/\//:\/\/www.}
+echo "Replacing ${WWWPROD} with ${WWWLOCAL}..."
+wp search-replace "${WWWPROD}" "${WWWLOCAL}"
+
 # and file paths
+echo "Replacing ${SITE[production_path]} with ${SITE[local_path]}..."
 wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"
 
 # Delete the local .sql files

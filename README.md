@@ -63,8 +63,8 @@ export SSHPASS="${SITE[ssh_password]}"
 - __local_mysql_database__ The name of the database on the local server. *wp_breakfastco*
 - __local_mysql_user__ The name of the user with permission to query the local database. *root*
 - __local_mysql_password__ The local database user's password *root*
-- __production_domain__ The remote site's domain including subdomain and starting with `://`. Used to change all URLs stored in the database, including the siteurl in the options table. *://example.com*
-- __local_domain__ The local site's domain including subdomain. *://example.test*
+- __production_domain__ The remote site's domain including subdomain and starting with `://`. Used to change all URLs stored in the database. A version that begins with ://www. will also be replaced. *://example.com*
+- __local_domain__ The local site's domain including subdomain. A version beginning with `://www.` will also replace versions of production_domain beginning with `://www.`. *://example.test*
 - __production_path__ Full path to the WordPress root folder on the remote server. */path/public_html/example.com/*
 - __local_path__ Full path to the WordPress root folder on the local server. */Users/user/Sites/example/*
 - __production_root_path__ Full path to the user's home directory we land in when connecting to the server via SSH. Sometimes does not like a preceding slash. */path/*
@@ -75,6 +75,11 @@ export SSHPASS="${SITE[ssh_password]}"
 This script supports both password and public key SSH authentication. To use a password, provide it in `ssh_password`. Register an SSH private key file using a command like `ssh-add /Users/{user-name}/{...}/privatekeyfilename` before running exfil, and provide the private key file name in `ssh_remote_key_file`.
 
 ## changelog
+
+### 1.6.2
+
+- __Added__ Now replaces versions of each domain that begin with `://www.` in addition to the provided domains.
+- __Changed__ Changes my email address in the code to a Github anonymized address.
 
 ### 1.6.0
 

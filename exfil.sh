@@ -24,9 +24,9 @@
 echo "Requires bash 5. Bash version = $BASH_VERSION"
 
 # Changes the admin email address so your local sites don't email anyone else
-development_email="csalzano@duck.com"
+development_email="938411+csalzano@users.noreply.github.com"
 # Change the email address with sed:
-# sed -i '' -e "s|csalzano@duck.com|youremail@example.com|g" exfil.sh
+# sed -i '' -e "s|938411+csalzano@users.noreply.github.com|youremail@example.com|g" exfil.sh
 
 
 echo "exfil updates local WordPress sites with fresh production data. Enter q at any prompt to quit."

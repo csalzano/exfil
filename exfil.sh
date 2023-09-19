@@ -276,17 +276,19 @@ fi
 
 # Replace site URLs from production to development
 echo "Replacing ${SITE[production_domain]} with ${SITE[local_domain]}..."
-wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}"
+wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}" --all-tables-with-prefix
+# Gravity Forms stores URLs in JSON in the wp_gf_form_meta table with https:\/\/.breakfastco.xyz
+wp search-replace "${SITE[production_domain]//\//\\\/}" "${SITE[local_domain]//\//\\\/}" --all-tables-with-prefix
 
 # Also replace www versions of the domains
 WWWPROD=${SITE[production_domain]//:\/\//:\/\/www.}
 WWWLOCAL=${SITE[local_domain]//:\/\//:\/\/www.}
 echo "Replacing ${WWWPROD} with ${WWWLOCAL}..."
-wp search-replace "${WWWPROD}" "${WWWLOCAL}"
+wp search-replace "${WWWPROD}" "${WWWLOCAL}" --all-tables-with-prefix
 
 # and file paths
 echo "Replacing ${SITE[production_path]} with ${SITE[local_path]}..."
-wp search-replace "${SITE[production_path]}" "${SITE[local_path]}"
+wp search-replace "${SITE[production_path]}" "${SITE[local_path]}" --all-tables-with-prefix
 
 # Delete the local .sql files
 if [ "y" == "$delete_sql_files" ]

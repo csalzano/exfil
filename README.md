@@ -76,6 +76,9 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.7.0
+
+- __Changed__ Stops installing and activating stop-emails. Replaces it with use-mailhog.
 ### 1.6.2
 
 - __Added__ Now replaces versions of each domain that begin with `://www.` in addition to the provided domains.

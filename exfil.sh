@@ -31,10 +31,10 @@ development_email="938411+csalzano@users.noreply.github.com"
 
 echo "exfil updates local WordPress sites with fresh production data. Enter q at any prompt to quit."
 
-# perhaps a site name was passed as the first argument
+# Was a site name was passed as the first argument?
 if [ -z "$1" ]
 then
-	# ask the user to type in a site name
+	# No. Ask the user to provide a site name.
 	echo "Which site would you like to sync?"
 	# TODO the available sites are...
 	read site_name
@@ -42,22 +42,21 @@ else
 	site_name=$1
 fi
 
-# check if the user wants to quit
-if [ "q" == "$site_name" ]
-then
-	exit
-fi
-
-# do we even have a .conf file for the site name provided?
+# Do we have a .conf file for the name provided? Check the current directory and
+# one level above.
 if [ ! -f "${site_name}.conf" ]
 then
-    echo "$site_name.conf not found, please check the spelling. Use the instructions in README.md to construct a conf file."
-	exit
+	if [ ! -f "../${site_name}.conf" ]
+	then
+		echo "$site_name.conf not found, please check the spelling. Use the instructions at in README.md to construct a conf file."
+		exit
+	else
+		source "../${site_name}.conf"
+	fi
+else
+	source "${site_name}.conf"
 fi
-
-
-echo "Loading ${site_name}.conf..."
-source "${site_name}.conf"
+echo "Loaded ${site_name}.conf"
 
 # Would you like to download any files?
 # n = No

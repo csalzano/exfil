@@ -95,7 +95,7 @@ then
 	# -q suppresses the server welcome message
 	# -p specifies the port number
 	sshpass -e ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EOF
-		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${SITE[production_root_path]}${FILE}"
+		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${SITE[production_root_path]}${FILE}" --no-tablespaces
 EOF
 	# $? is the exit status of the most recently-executed command; by convention
 	# 0 means success and anything else indicates failure.
@@ -165,7 +165,7 @@ else
 	echo "Exporting database..."
 
 	ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" << EEOF
-		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${SITE[production_root_path]}${FILE}"
+		mysqldump --user="${SITE[production_mysql_user]}" --password="${SITE[production_mysql_password]}" "${SITE[production_mysql_database]}" > "${SITE[production_root_path]}${FILE}" --no-tablespaces
 EEOF
 	# $? is the exit status of the most recently-executed command; by convention
 	# 0 means success and anything else indicates failure.

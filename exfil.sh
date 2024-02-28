@@ -183,7 +183,7 @@ EEOF
 
 		# download the .sql payload
 		echo "Downloading .sql file..."
-		scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_root_path]}${FILE}" "${SITE[local_path]}"
+		scp -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_root_path]}${FILE}" "${SITE[local_path]}"
 
 		# delete the .sql payload from the server
 		echo "Deleting .sql file from server..."
@@ -194,29 +194,29 @@ EEOF
 	case $download_wp_content in
 		t)
 			echo "Downloading the wp-content/themes folder..."
-			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
 		;;
 
 		p) # Plugins
 			echo "Downloading the wp-content/plugins folder..."
-			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
 		;;
 
 		o) # Themes & Plugins
 			echo "Downloading the wp-content/themes folder..."
-			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
 			echo "Downloading the wp-content/plugins folder..."
-			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
 		;;
 
 		u) # Uploads
 			echo "Downloading the wp-content/uploads folder..."
-			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
 		;;
 
 		a) # All of wp-content
 			echo "Downloading the wp-content folder..."
-			scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
 		;;
 	esac
 
@@ -275,19 +275,25 @@ fi
 
 # Replace site URLs from production to development
 echo "Replacing ${SITE[production_domain]} with ${SITE[local_domain]}..."
-wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}" --all-tables-with-prefix
+wp search-replace "${SITE[production_domain]}" "${SITE[local_domain]}" --all-tables-with-prefix --report-changed-only
 # Gravity Forms stores URLs in JSON in the wp_gf_form_meta table with https:\/\/.breakfastco.xyz
-wp search-replace "${SITE[production_domain]//\//\\\/}" "${SITE[local_domain]//\//\\\/}" --all-tables-with-prefix
+echo "Replacing ${SITE[production_domain]//\//\\\/} with ${SITE[local_domain]//\//\\\/}..."
+wp search-replace "${SITE[production_domain]//\//\\\/}" "${SITE[local_domain]//\//\\\/}" --all-tables-with-prefix --report-changed-only
 
-# Also replace www versions of the domains
-WWWPROD=${SITE[production_domain]//:\/\//:\/\/www.}
-WWWLOCAL=${SITE[local_domain]//:\/\//:\/\/www.}
-echo "Replacing ${WWWPROD} with ${WWWLOCAL}..."
-wp search-replace "${WWWPROD}" "${WWWLOCAL}" --all-tables-with-prefix
+# Also replace www versions of the domains if production_domain is not already www
+# The == comparison operator behaves differently within a double-brackets
+# [[ $a == z* ]]   # True if $a starts with a "z" (wildcard matching).
+if [[ "${SITE[production_domain]}" != ://www* ]]
+then
+	WWWPROD=${SITE[production_domain]//:\/\//:\/\/www.}
+	WWWLOCAL=${SITE[local_domain]//:\/\//:\/\/www.}
+	echo "Replacing ${WWWPROD} with ${WWWLOCAL}..."
+	wp search-replace "${WWWPROD}" "${WWWLOCAL}" --all-tables-with-prefix --report-changed-only
+fi
 
 # and file paths
 echo "Replacing ${SITE[production_path]} with ${SITE[local_path]}..."
-wp search-replace "${SITE[production_path]}" "${SITE[local_path]}" --all-tables-with-prefix
+wp search-replace "${SITE[production_path]}" "${SITE[local_path]}" --all-tables-with-prefix --report-changed-only
 
 # Delete the local .sql files
 if [ "y" == "$delete_sql_files" ]

@@ -76,9 +76,22 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.7.2
+
+- __Fixed__ Do not activate the use-mailhog plugin before the folder is renamed.
+- __Fixed__ Only replaces www. versions of the production domain if the production domain does not already start with www.
+- __Fixed__ Adds -O parameter to all scp calls so the script works on WP Engine.
+- __Changed__ Adds the --report-changed-only parameter to all wp search-replace calls to shrink the output.
+
+### 1.7.1
+
+- __Added__ Checks one level above the current directory for .conf files. I have moved this script into a directory to simplify my copy of the repo.
+- __Fixed__ Adds --no-tablespaces to the mysqldump commands. Rocket.net requires it.
+
 ### 1.7.0
 
 - __Changed__ Stops installing and activating stop-emails. Replaces it with use-mailhog.
+
 ### 1.6.2
 
 - __Added__ Now replaces versions of each domain that begin with `://www.` in addition to the provided domains.

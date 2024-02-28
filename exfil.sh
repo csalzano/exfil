@@ -106,7 +106,7 @@ EOF
 		# did we get the WP Engine file?
 		if [ "$?" -eq 0 ]; then
 			# yes, rename it from mysql.sql to the file name we will use later
-			mv "${SITE[local_path]}mysql.sql" "${SITE[local_path]}${SITE[local_mysql_database]}.sql"
+			mv "${SITE[local_path]}mysql.sql" "${SITE[local_path]}${FILE}"
 		fi
 	else
 		echo "mysqldump success"
@@ -176,7 +176,7 @@ EEOF
 		# did we get the WP Engine file?
 		if [ "$?" -eq 0 ]; then
 			# yes, rename it from mysql.sql to the file name we will use later
-			mv "${SITE[local_path]}mysql.sql" "${SITE[local_path]}${SITE[local_mysql_database]}.sql"
+			mv "${SITE[local_path]}mysql.sql" "${SITE[local_path]}${FILE}"
 		fi
 	else
 		echo "mysqldump success"

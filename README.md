@@ -65,9 +65,9 @@ export SSHPASS="${SITE[ssh_password]}"
 - __local_mysql_password__ The local database user's password *root*
 - __production_domain__ The remote site's domain including subdomain and starting with `://`. Used to change all URLs stored in the database. A version that begins with ://www. will also be replaced. *://example.com*
 - __local_domain__ The local site's domain including subdomain. A version beginning with `://www.` will also replace versions of production_domain beginning with `://www.`. *://example.test*
-- __production_path__ Full path to the WordPress root folder on the remote server. */path/public_html/example.com/*
+- __production_path__ Full path to the WordPress root folder on the remote server. *path/public_html/example.com/*
 - __local_path__ Full path to the WordPress root folder on the local server. */Users/user/Sites/example/*
-- __production_root_path__ Full path to the user's home directory we land in when connecting to the server via SSH. Sometimes does not like a preceding slash. */path/*
+- __production_root_path__ Full path to the user's home directory we land in when connecting to the server via SSH. Sometimes does not like a preceding slash. *path/*
 - __script_after__ Optional. Script to run after the local copy of the site is updated. *wp user create corey csalzano@duck.com --role=administrator*
 
 ### SSH Authentication

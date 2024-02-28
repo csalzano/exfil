@@ -352,13 +352,11 @@ wp plugin is-installed use-mailhog
 if [ 1 == "$?" ]
 then
 	# No.
-	wp plugin install https://github.com/csalzano/use-mailhog/archive/refs/heads/main.zip --activate
+	wp plugin install https://github.com/csalzano/use-mailhog/archive/refs/heads/main.zip
 	# Remove the github branch name from the folder.
 	mv wp-content/plugins/use-mailhog-main wp-content/plugins/use-mailhog
-else
-	# Yes. Activate it.
-	wp plugin activate use-mailhog
 fi
+wp plugin activate use-mailhog
 
 # Does the site config have a script_after we need to run?
 if [ -v SITE[script_after] ]

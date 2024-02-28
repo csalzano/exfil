@@ -41,10 +41,10 @@ declare -A SITE=(
 	[production_domain]="://example.xyz"
 	[local_domain]="://example.test"
 
-	[production_path]="/path/public_html/example.xyz/"
+	[production_path]="path/public_html/example.xyz/"
 	[local_path]="/Users/user/Sites/example/"
 
-	[production_root_path]="/path/"
+	[production_root_path]="path/"
 
 	[script_after]=""
 )

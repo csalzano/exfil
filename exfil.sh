@@ -124,30 +124,34 @@ EOF
 	# maybe download files
 	case $download_wp_content in
 		t)
+			# rsync params
+			# -a archive mode; equals -rlptgoD (no -H,-A,-X)
+			# -z compress file data during the transfer
+			# -v increase verbosity
 			echo "Downloading the wp-content/themes folder..."
-			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
 		;;
 		
 		p) # Plugins
 			echo "Downloading the wp-content/plugins folder..."
-			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
 		;;
 
 		o) # Themes & Plugins
 			echo "Downloading the wp-content/themes folder..."
-			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
 			echo "Downloading the wp-content/plugins folder..."
-			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
 		;;
 
 		u) # Uploads
 			echo "Downloading the wp-content/uploads folder..."
-			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
 		;;
 
 		a) # All of wp-content
 			echo "Downloading the wp-content folder..."
-			sshpass -p "${SITE[ssh_password]}" scp -r -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}wp-content"
 		;;
 	esac
 
@@ -195,19 +199,19 @@ EEOF
 	case $download_wp_content in
 		t)
 			echo "Downloading the wp-content/themes folder..."
-			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
 		;;
 
 		p) # Plugins
 			echo "Downloading the wp-content/plugins folder..."
-			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
 		;;
 
 		o) # Themes & Plugins
 			echo "Downloading the wp-content/themes folder..."
-			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
 			echo "Downloading the wp-content/plugins folder..."
-			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
 		;;
 
 		u) # Uploads
@@ -217,7 +221,7 @@ EEOF
 
 		a) # All of wp-content
 			echo "Downloading the wp-content folder..."
-			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
 		;;
 	esac
 

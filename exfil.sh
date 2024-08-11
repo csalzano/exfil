@@ -211,7 +211,7 @@ EEOF
 
 		u) # Uploads
 			echo "Downloading the wp-content/uploads folder..."
-			scp -r -O -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
 		;;
 
 		a) # All of wp-content

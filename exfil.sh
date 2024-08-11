@@ -89,7 +89,8 @@ fi
 FILE="${SITE[local_mysql_database]}.sql"
 if [ -z "${SITE[ssh_remote_key_file]}" ] && [ -n "${SITE[ssh_password]}" ]; # Remote key file is empty and password is not empty.
 then
-	echo "Using sshpass...\nExporting database..."
+	echo "Using sshpass...";
+	echo "Exporting database..."
 
 	# -o delivers option StrictHostKeyChecking=no to avoid a yes/no question and blindly trust the host's ssh key
 	# -q suppresses the server welcome message

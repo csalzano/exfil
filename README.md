@@ -76,6 +76,12 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.7.3
+
+- __Fixed__ Changes all multi file transfers to use rsync instead of scp.
+- __Fixed__ Adds a warning when sshpass is being used.
+- __Fixed__ Prevents sshpass from being used when no password is found in conf file.
+
 ### 1.7.2
 
 - __Fixed__ Do not activate the use-mailhog plugin before the folder is renamed.

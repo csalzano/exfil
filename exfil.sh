@@ -342,6 +342,21 @@ then
 	fi
 
 	#TODO disable all gravity forms notifications & feeds
+
+	# Is the Gravity Forms Cloudflare Turnstile add-on active?
+	wp plugin is-active gravityformsturnstile
+	if [ 0 == "$?" ]
+	then
+		# Yes.
+		# Replace the key and secret with always-pass dummy values.
+		# https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+		wp option get gravityformsaddon_gravityformsturnstile_settings --format=json | php -r "
+\$option = json_decode( fgets(STDIN) );
+\$option->site_key = \"1x00000000000000000000AA\";
+\$option->site_secret = \"1x0000000000000000000000000000000AA\";
+print json_encode(\$option);
+" | wp option set gravityformsaddon_gravityformsturnstile_settings --format=json
+	fi
 fi
 
 # Is the SiteGround Optimizer plugin active?

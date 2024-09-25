@@ -15,7 +15,7 @@
 #
 #       extracts WordPress databases and files
 #
-#		version 1.7.3
+#		version 1.8.0
 #
 
 
@@ -151,7 +151,7 @@ EOF
 
 		a) # All of wp-content
 			echo "Downloading the wp-content folder..."
-			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}wp-content"
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
 		;;
 	esac
 

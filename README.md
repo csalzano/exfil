@@ -76,6 +76,14 @@ This script supports both password and public key SSH authentication. To use a p
 
 ## changelog
 
+### 1.8.1
+
+- __Fixed__ Fixes a bug when downloading "All of wp-content"
+
+### 1.8.0
+
+- __Added__ Replaces Gravity Forms Cloudflare Turnstile add-on site key and secret keys with dummy values that will always pass.
+
 ### 1.7.3
 
 - __Fixed__ Changes all multi file transfers to use rsync instead of scp.

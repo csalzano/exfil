@@ -58,6 +58,57 @@ else
 fi
 echo "Loaded ${site_name}.conf"
 
+# Should we delete any local files before we start?
+# n = No
+# t = Themes
+# p = Plugins
+# o = Themes & Plugins
+# u = Uploads
+# ugf = Gravity Forms uploads
+# a = Themes, Plugins, Must-Use Plugins, and Uploads
+RED='\033[0;31m'
+NO_COLOR='\033[0m' # No Color
+printf "Would you like to ${RED}delete${NO_COLOR} any local files before we start?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\nugf = Gravity Forms uploads\na = Themes, Plugins, Must-Use Plugins, and Uploads\n"
+read delete_wp_content
+
+# check if the user wants to quit
+if [ "q" == "$delete_wp_content" ]
+then
+	exit
+fi
+
+# Delete local files
+case $delete_wp_content in
+	t)
+		rm -rf "${SITE[local_path]}wp-content/themes/*"
+	;;
+
+	p) # Plugins
+		rm -rf "${SITE[local_path]}wp-content/plugins/*"
+	;;
+
+	o) # Themes & Plugins
+		rm -rf "${SITE[local_path]}wp-content/themes/*"
+		rm -rf "${SITE[local_path]}wp-content/plugins/*"
+	;;
+
+	u) # Uploads
+		rm -rf "${SITE[local_path]}wp-content/uploads/*"
+	;;
+
+	ugf) # Gravity Forms uploads
+		rm -rf "${SITE[local_path]}wp-content/uploads/gravity_forms/*"
+	;;
+
+	a) # Themes, Plugins, Must-Use Plugins, and Uploads
+		rm -rf "${SITE[local_path]}wp-content/themes/*"
+		rm -rf "${SITE[local_path]}wp-content/plugins/*"
+		rm -rf "${SITE[local_path]}wp-content/mu-plugins/*"
+		rm -rf "${SITE[local_path]}wp-content/uploads/*"
+	;;
+esac
+
+
 # Would you like to download any files?
 # n = No
 # t = Themes

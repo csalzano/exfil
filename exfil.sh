@@ -39,6 +39,32 @@ else
 	site_name=$1
 fi
 
+# Process parameters passed to the script.
+for ARG in "$@"; do
+	case $ARG in
+		# Should we delete any local files before we start?
+		--no-deletes)
+			delete_wp_content="n"
+		;;
+
+		# Should we download any files?
+		--no-downloads)
+			download_wp_content="n"
+		;;
+		--download-plugins)
+			download_wp_content="p"
+		;;
+		--download-themes)
+			download_wp_content="t"
+		;;
+
+		# Keep local .sql file after importing? (y/n).
+		--no-keep-sql)
+			keep_sql_file="n"
+		;;
+	esac
+done
+
 # Colors for red text.
 RED='\033[0;31m'
 NO_COLOR='\033[0m' # No Color
@@ -59,23 +85,24 @@ else
 fi
 echo "Loaded ${site_name}.conf"
 
-# Should we delete any local files before we start?
-# n = No
-# t = Themes
-# p = Plugins
-# o = Themes & Plugins
-# u = Uploads
-# ugf = Gravity Forms uploads
-# a = Themes, Plugins, Must-Use Plugins, and Uploads
-RED='\033[0;31m'
-NO_COLOR='\033[0m' # No Color
-printf "Would you like to ${RED}delete${NO_COLOR} any local files before we start?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\nugf = Gravity Forms uploads\na = Themes, Plugins, Must-Use Plugins, and Uploads\n"
-read delete_wp_content
-
-# check if the user wants to quit
-if [ "q" == "$delete_wp_content" ]
+if [ -z "$delete_wp_content" ]
 then
-	exit
+	# Should we delete any local files before we start?
+	# n = No
+	# t = Themes
+	# p = Plugins
+	# o = Themes & Plugins
+	# u = Uploads
+	# ugf = Gravity Forms uploads
+	# a = Themes, Plugins, Must-Use Plugins, and Uploads
+	printf "Would you like to ${RED}delete${NO_COLOR} any local files before we start?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\nugf = Gravity Forms uploads\na = Themes, Plugins, Must-Use Plugins, and Uploads\n"
+	read delete_wp_content
+
+	# check if the user wants to quit
+	if [ "q" == "$delete_wp_content" ]
+	then
+		exit
+	fi
 fi
 
 # Delete local files
@@ -110,29 +137,36 @@ case $delete_wp_content in
 esac
 
 
-# Would you like to download any files?
-# n = No
-# t = Themes
-# p = Plugins
-# o = Themes & Plugins
-# u = Uploads
-# a = All of wp-content
-printf "Would you like to download any files?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\na = All of wp-content\n"
-read download_wp_content
-
-# check if the user wants to quit
-if [ "q" == "$download_wp_content" ]
+if [ -z "$download_wp_content" ]
 then
-	exit
+	# Would you like to download any files?
+	# n = No
+	# t = Themes
+	# p = Plugins
+	# o = Themes & Plugins
+	# u = Uploads
+	# a = All of wp-content
+	printf "Would you like to download any files?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\na = All of wp-content\n"
+	read download_wp_content
+
+	# check if the user wants to quit
+	if [ "q" == "$download_wp_content" ]
+	then
+		exit
+	fi
 fi
 
-echo "Delete local .sql file after importing? (y/n)"
-read delete_sql_files
-
-# check if the user wants to quit
-if [ "q" == "$delete_sql_files" ]
+if [ -z "$keep_sql_file" ]
 then
-	exit
+	# Keep local .sql file after importing? (y/n)
+	echo "Keep local .sql file after importing? (y/n)"
+	read keep_sql_file
+
+	# check if the user wants to quit
+	if [ "q" == "$keep_sql_file" ]
+	then
+		exit
+	fi
 fi
 
 # CREATE & DOWNLOAD BACKUP
@@ -353,10 +387,9 @@ echo "Replacing ${SITE[production_path]} with ${SITE[local_path]}..."
 wp search-replace "${SITE[production_path]}" "${SITE[local_path]}" --all-tables-with-prefix --report-changed-only
 
 # Delete the local .sql files
-if [ "y" == "$delete_sql_files" ]
+if [ "n" == "$keep_sql_file" ]
 then
 	rm -f "${SITE[local_path]}${FILE}"
-	rm -f "${SITE[local_path]}${FILE}.backup.txt"
 fi
 
 # Are we loading plugins?

@@ -20,9 +20,6 @@
 
 
 
-# Requires bash 5
-echo "Requires bash 5. Bash version = $BASH_VERSION"
-
 # Changes the admin email address so your local sites don't email anyone else
 development_email="938411+csalzano@users.noreply.github.com"
 # Change the email address with sed:

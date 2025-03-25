@@ -39,13 +39,17 @@ else
 	site_name=$1
 fi
 
+# Colors for red text.
+RED='\033[0;31m'
+NO_COLOR='\033[0m' # No Color
+
 # Do we have a .conf file for the name provided? Check the current directory and
 # one level above.
 if [ ! -f "${site_name}.conf" ]
 then
 	if [ ! -f "../${site_name}.conf" ]
 	then
-		echo "$site_name.conf not found, please check the spelling. Use the instructions at in README.md to construct a conf file."
+		printf "${RED}$site_name.conf not found, please check the spelling.${NO_COLOR} Use the instructions at in README.md to construct a conf file."
 		exit
 	else
 		source "../${site_name}.conf"

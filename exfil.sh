@@ -15,7 +15,7 @@
 #
 #       extracts WordPress databases and files
 #
-#		version 1.8.1
+#		version 2.1.0
 #
 
 

@@ -395,7 +395,7 @@ fi
 # Are we loading plugins?
 if [ "o" == "$download_wp_content" ] || [ "p" == "$download_wp_content" ]
 then
-	# install all active plugins basd on the `active_plugins` option value
+	# install all active plugins based on the `active_plugins` option value
 	# that was just written to the database
 	wp option get active_plugins --format=json | php -r "foreach( json_decode( fgets(STDIN) ) as \$value ) { \$p=explode('/',\$value);fwrite(STDOUT, (is_array( \$p ) ? \$p[0] : \$p).PHP_EOL); }" | xargs -n1 bash -c '
 	VERSION=$(wp plugin get $0 --field=version --quiet)

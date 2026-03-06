@@ -356,12 +356,12 @@ EOFMYSQL
 # wp-cli, the WordPress Command Line Interface
 
 # Make sure the $table_prefix variable in wp-config.php is accurate
-if [ "${TABLE_PREFIX}" != "${TABLE_PREFIX_LOCAL}" ]
+if [ -n "${TABLE_PREFIX}" ] && [ "${TABLE_PREFIX}" != "${TABLE_PREFIX_LOCAL}" ]
 then
 	echo "Changing \$table_prefix from '${TABLE_PREFIX_LOCAL}' to '${TABLE_PREFIX}'"
 	# Looks like $table_prefix = 'hif_';
-	sed -i '' "s/$table_prefix = '${TABLE_PREFIX_LOCAL}'/$table_prefix = '${TABLE_PREFIX}'/" wp-config.php
-	sed -i '' "s/$table_prefix = \"${TABLE_PREFIX_LOCAL}\"/$table_prefix = \"${TABLE_PREFIX}\"/" wp-config.php
+	sed -i '' "s/\$table_prefix = '${TABLE_PREFIX_LOCAL}'/\$table_prefix = '${TABLE_PREFIX}'/" wp-config.php
+	sed -i '' "s/\$table_prefix = \"${TABLE_PREFIX_LOCAL}\"/\$table_prefix = \"${TABLE_PREFIX}\"/" wp-config.php
 fi
 
 # Replace site URLs from production to development

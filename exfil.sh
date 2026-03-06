@@ -245,7 +245,7 @@ EOF
 	echo "Downloading \$table_prefix..."
 	TABLE_PREFIX=$(sshpass -e ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "
 		cd "${SITE[production_path]}";
-		wp db prefix
+		wp db prefix --skip-plugins
 	")
 	echo "\$table_prefix = '${TABLE_PREFIX}'"
 
@@ -315,7 +315,7 @@ EEOF
 	echo "Downloading \$table_prefix..."
 	TABLE_PREFIX=$(ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "
 		cd "${SITE[production_path]}";
-		wp db prefix
+		wp db prefix --skip-plugins
 	")
 	echo "\$table_prefix = '${TABLE_PREFIX}'"
 fi

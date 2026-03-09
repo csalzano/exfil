@@ -6,7 +6,9 @@ Bash scripting that extracts production WordPress websites and updates their loc
 
 ### Dependencies
 
-1. Requires bash 5
+1. Requires bash 4.2
+	- Associative arrays were introduced in bash 4.0
+	- The `-v` flag used on like 481 `if [ -v SITE[script_after] ]` tests whether an associative array key actually exists was added in bash 4.2.
 2. Requires sshpass if you choose to use ssh passwords instead of key files.
 
 ### Instructions

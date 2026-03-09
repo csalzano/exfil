@@ -1,6 +1,6 @@
 # exfil
 
-Bash scripting that extracts production WordPress websites and updates their local versions in my computer. Designed to run on a MacBook.
+A bash script that extracts production WordPress websites and updates their local versions on my computer. Designed to run on a MacBook.
 
 ## How to Use
 
@@ -8,14 +8,14 @@ Bash scripting that extracts production WordPress websites and updates their loc
 
 1. Requires bash 4.2
 	- Associative arrays were introduced in bash 4.0
-	- The `-v` flag used on like 481 `if [ -v SITE[script_after] ]` tests whether an associative array key actually exists was added in bash 4.2.
+	- The `-v` flag used on line 481 `if [ -v SITE[script_after] ]` tests whether an associative array key actually exists was added in bash 4.2.
 2. Requires sshpass for any site configured with ssh_password rather than ssh_remote_key_file.
 
 ### Instructions
 
 1. [Download](https://github.com/csalzano/exfil/archive/master.zip) exfil.sh and this README.md file
 2. Create a configuration file `example.conf` for each local and production website pair. Use the sample file contents below.
-3. Change the email address on [line 28](https://github.com/csalzano/exfil/blob/master/exfil.sh#L28) to your email address. Consider using a command like `sed -i '' -e "s|938411+csalzano@users.noreply.github.com|youremail@example.com|g" exfil.sh`
+3. Change the email address on [line 24](https://github.com/csalzano/exfil/blob/master/exfil.sh#L24) to your email address. Consider using a command like `sed -i '' -e "s|938411+csalzano@users.noreply.github.com|youremail@example.com|g" exfil.sh`
 4. Navigate to the directory that contains `exfil.sh` and your configuration files in Terminal
 5. Type `bash exfil.sh` or `bash exfil.sh example` to skip the prompt asking which configuration file should be loaded
 6. Enter `q` at any prompt to abort the program
@@ -50,6 +50,7 @@ declare -A SITE=(
 
 	[script_after]=""
 )
+# Passes ssh_password to sshpass via the SSHPASS environment variable
 export SSHPASS="${SITE[ssh_password]}"
 ```
 
@@ -69,7 +70,7 @@ export SSHPASS="${SITE[ssh_password]}"
 - __local_domain__ The local site's domain including subdomain. A version beginning with `://www.` will also replace versions of production_domain beginning with `://www.`. *://example.test*
 - __production_path__ Full path to the WordPress root folder on the remote server. *path/public_html/example.com/*
 - __local_path__ Full path to the WordPress root folder on the local server. */Users/user/Sites/example/*
-- __production_root_path__ Full path to the user's home directory we land in when connecting to the server via SSH. Sometimes does not like a preceding slash. *path/*
+- __production_root_path__ Full path to the user's home directory you land in when connecting to the server via SSH. Sometimes does not like a preceding slash. *path/*
 - __script_after__ Optional. Script to run after the local copy of the site is updated. Find my favorites in the [Shell Command Library](https://breakfastco.xyz/wp-cli-command-library/). `wp user create corey 938411+csalzano@users.noreply.github.com --role=administrator`
 
 ### SSH Authentication
@@ -77,6 +78,10 @@ export SSHPASS="${SITE[ssh_password]}"
 This script supports both password and public key SSH authentication. To use a password, provide it in `ssh_password`. Register an SSH private key file using a command like `ssh-add /Users/{user-name}/{...}/privatekeyfilename` before running exfil, and provide the private key file name in `ssh_remote_key_file`.
 
 ## changelog
+
+### 2.1.2
+
+- __Fixed__ Updates documentation. "Requires bash 5" was incorrect. This script requires bash 4.2. Clarifies when sshpass is required.
 
 ### 2.1.1
 

@@ -173,6 +173,7 @@ fi
 
 # create the database backup on the server
 FILE="${SITE[local_mysql_database]}.sql"
+REMOTE_WPCLI_EXPORT="/tmp/exfil-${SITE[production_mysql_database]}-$$.sql"
 if [ -z "${SITE[ssh_remote_key_file]}" ] && [ -n "${SITE[ssh_password]}" ]; # Remote key file is empty and password is not empty.
 then
 	echo "Using sshpass...";
@@ -187,13 +188,22 @@ EOF
 	# $? is the exit status of the most recently-executed command; by convention
 	# 0 means success and anything else indicates failure.
 	if [ "$?" -ne 0 ]; then
-		echo "mysqldump failed, looking for WP Engine file..."
+		echo "mysqldump failed, exporting via wp-cli..."
 
-		sshpass -p "${SITE[ssh_password]}" scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/mysql.sql" "${SITE[local_path]}"
-		# did we get the WP Engine file?
+		sshpass -e ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "
+			cd \"${SITE[production_path]}\";
+			wp db export \"${REMOTE_WPCLI_EXPORT}\" --skip-plugins
+		"
+		# did wp-cli create the file?
 		if [ "$?" -eq 0 ]; then
-			# yes, rename it from mysql.sql to the file name we will use later
-			mv "${SITE[local_path]}mysql.sql" "${SITE[local_path]}${FILE}"
+			echo "wp-cli export success"
+			sshpass -p "${SITE[ssh_password]}" scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${REMOTE_WPCLI_EXPORT}" "${SITE[local_path]}"
+			if [ "$?" -eq 0 ]; then
+				# rename it from mysql.sql to the file name we will use later
+				mv "${SITE[local_path]}$(basename "${REMOTE_WPCLI_EXPORT}")" "${SITE[local_path]}${FILE}"
+			fi
+			# clean up server-side fallback export file
+			sshpass -e ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f \"${REMOTE_WPCLI_EXPORT}\""
 		fi
 	else
 		echo "mysqldump success"
@@ -261,13 +271,22 @@ EEOF
 	# $? is the exit status of the most recently-executed command; by convention
 	# 0 means success and anything else indicates failure.
 	if [ "$?" -ne 0 ]; then
-		echo "mysqldump failed, looking for WP Engine file..."
+		echo "mysqldump failed, exporting via wp-cli..."
 
-		scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/mysql.sql" "${SITE[local_path]}"
-		# did we get the WP Engine file?
+		ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "
+			cd \"${SITE[production_path]}\";
+			wp db export \"${REMOTE_WPCLI_EXPORT}\" --skip-plugins
+		"
+		# did wp-cli create the file?
 		if [ "$?" -eq 0 ]; then
-			# yes, rename it from mysql.sql to the file name we will use later
-			mv "${SITE[local_path]}mysql.sql" "${SITE[local_path]}${FILE}"
+			echo "wp-cli export success"
+			scp -P "${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${REMOTE_WPCLI_EXPORT}" "${SITE[local_path]}"
+			if [ "$?" -eq 0 ]; then
+				# rename it from mysql.sql to the file name we will use later
+				mv "${SITE[local_path]}$(basename "${REMOTE_WPCLI_EXPORT}")" "${SITE[local_path]}${FILE}"
+			fi
+			# clean up server-side fallback export file
+			ssh -q -o StrictHostKeyChecking=no "${SITE[ssh_user_at_host]}" -p "${SITE[ssh_port]}" "rm -f \"${REMOTE_WPCLI_EXPORT}\""
 		fi
 	else
 		echo "mysqldump success"

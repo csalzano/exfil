@@ -85,6 +85,17 @@ else
 fi
 echo "Loaded ${site_name}.conf"
 
+# Remember the current DISABLE_WP_CRON value so we can restore it later.
+LOCAL_DISABLE_WP_CRON_WAS_SET=false
+if wp config has DISABLE_WP_CRON --type=constant --path="${SITE[local_path]}" >/dev/null 2>&1
+then
+	LOCAL_DISABLE_WP_CRON_WAS_SET=true
+	LOCAL_DISABLE_WP_CRON_VALUE=$(wp config get DISABLE_WP_CRON --type=constant --path="${SITE[local_path]}")
+fi
+
+# Disable WP Cron locally before we DROP all database tables.
+wp config set DISABLE_WP_CRON true --raw --path="${SITE[local_path]}"
+
 if [ -z "$delete_wp_content" ]
 then
 	# Should we delete any local files before we start?
@@ -494,3 +505,11 @@ fi
 # Waited to do this until after the stop-emails plugin is active
 wp option update admin_email "${development_email}" --skip-plugins --skip-themes
 wp option update new_admin_email "${development_email}" --skip-plugins --skip-themes
+
+# Restore the previous WP Cron setting locally.
+if [ "true" = "${LOCAL_DISABLE_WP_CRON_WAS_SET}" ]
+then
+	wp config set DISABLE_WP_CRON "${LOCAL_DISABLE_WP_CRON_VALUE}" --raw --path="${SITE[local_path]}"
+else
+	wp config delete DISABLE_WP_CRON --type=constant --path="${SITE[local_path]}"
+fi

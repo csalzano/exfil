@@ -77,7 +77,32 @@ export SSHPASS="${SITE[ssh_password]}"
 
 This script supports both password and public key SSH authentication. To use a password, provide it in `ssh_password`. Register an SSH private key file using a command like `ssh-add /Users/{user-name}/{...}/privatekeyfilename` before running exfil, and provide the private key file name in `ssh_remote_key_file`.
 
+## Running script_after Without a Full Sync
+
+To re-run a conf file's `script_after` commands against an already-synced local site — without downloading anything — source the conf file and eval the value directly. Run from any directory:
+
+```bash
+source ~/Sites/site.conf && cd "${SITE[local_path]}" && eval "${SITE[script_after]}"
+```
+
+Swap the conf filename for any other site:
+
+```bash
+source ~/Sites/site.conf && cd "${SITE[local_path]}" && eval "${SITE[script_after]}"
+```
+
+The `source` loads the conf and populates the `SITE` array. The `cd` puts the shell in the WordPress root so wp-cli targets the right site. Then `eval` runs the commands exactly as exfil would.
+
 ## changelog
+
+### 2.2.0
+
+- __Added__ Starts installing and/or activating GF wp-cli add-on if Gravity Forms is installed.
+- __Fixed__ Sets and restores DISABLE_WP_CRON constant. Avoid missing database table errors by disabling wp-cron while we work on the site.
+
+### 2.1.3
+
+- __Fixed__ Instead of a WP Engine fallback, uses wp-cli to export the database any time mysqldump fails. Restores compatibility with WP Engine.
 
 ### 2.1.2
 

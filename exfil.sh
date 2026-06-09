@@ -446,6 +446,16 @@ if [ 0 == "$?" ]
 then
 	# Yes
 
+	# Is the Gravity Forms wp-cli add-on installed?
+	wp plugin is-installed gravityformscli
+	if [ 1 == "$?" ]
+	then
+		# No
+		wp plugin install gravityformscli --activate
+	else
+		wp plugin activate gravityformscli
+	fi
+
 	# Is the Power Boost for Gravity Forms plugin installed?
 	wp plugin is-installed power-boost-for-gravity-forms
 	if [ 1 == "$?" ]

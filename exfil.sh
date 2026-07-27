@@ -96,17 +96,21 @@ fi
 # Disable WP Cron locally before we DROP all database tables.
 wp config set DISABLE_WP_CRON true --raw --path="${SITE[local_path]}"
 
+# Shared file treatment options for delete and download prompts.
+# n = No
+# t = Themes
+# p = Plugins
+# o = Themes & Plugins
+# u = Uploads
+# ugf = Gravity Forms uploads
+# a = Themes, Plugins, Must-Use Plugins, and Uploads
+# c = All of wp-content
+file_treatment_options="n = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\nugf = Gravity Forms uploads\na = Themes, Plugins, Must-Use Plugins, and Uploads\nc = All of wp-content"
+
 if [ -z "$delete_wp_content" ]
 then
 	# Should we delete any local files before we start?
-	# n = No
-	# t = Themes
-	# p = Plugins
-	# o = Themes & Plugins
-	# u = Uploads
-	# ugf = Gravity Forms uploads
-	# a = Themes, Plugins, Must-Use Plugins, and Uploads
-	printf "Would you like to ${RED}delete${NO_COLOR} any local files before we start?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\nugf = Gravity Forms uploads\na = Themes, Plugins, Must-Use Plugins, and Uploads\n"
+	printf "Would you like to ${RED}delete${NO_COLOR} any local files before we start?\n${file_treatment_options}\n"
 	read delete_wp_content
 
 	# check if the user wants to quit
@@ -145,19 +149,17 @@ case $delete_wp_content in
 		rm -rf "${SITE[local_path]}wp-content/mu-plugins/*"
 		rm -rf "${SITE[local_path]}wp-content/uploads/*"
 	;;
+
+	c) # All of wp-content
+		rm -rf "${SITE[local_path]}wp-content/"*
+	;;
 esac
 
 
 if [ -z "$download_wp_content" ]
 then
 	# Would you like to download any files?
-	# n = No
-	# t = Themes
-	# p = Plugins
-	# o = Themes & Plugins
-	# u = Uploads
-	# a = All of wp-content
-	printf "Would you like to download any files?\nn = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\na = All of wp-content\n"
+	printf "Would you like to download any files?\n${file_treatment_options}\n"
 	read download_wp_content
 
 	# check if the user wants to quit
@@ -256,7 +258,23 @@ EOF
 			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
 		;;
 
-		a) # All of wp-content
+		ugf) # Gravity Forms uploads
+			echo "Downloading the wp-content/uploads/gravity_forms folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads/gravity_forms" "${SITE[local_path]}wp-content/uploads"
+		;;
+
+		a) # Themes, Plugins, Must-Use Plugins, and Uploads
+			echo "Downloading the wp-content/themes folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/plugins folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/mu-plugins folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/mu-plugins" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/uploads folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+		;;
+
+		c) # All of wp-content
 			echo "Downloading the wp-content folder..."
 			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
 		;;
@@ -335,7 +353,23 @@ EEOF
 			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
 		;;
 
-		a) # All of wp-content
+		ugf) # Gravity Forms uploads
+			echo "Downloading the wp-content/uploads/gravity_forms folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads/gravity_forms" "${SITE[local_path]}wp-content/uploads"
+		;;
+
+		a) # Themes, Plugins, Must-Use Plugins, and Uploads
+			echo "Downloading the wp-content/themes folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/plugins folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/mu-plugins folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/mu-plugins" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/uploads folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+		;;
+
+		c) # All of wp-content
 			echo "Downloading the wp-content folder..."
 			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
 		;;
@@ -360,6 +394,8 @@ fi
 
 # ALTER FILE AND EXECUTE
 
+# Remember the current directory.
+dir=$(pwd)
 # Move to the site folder
 cd "${SITE[local_path]}"
 
@@ -423,7 +459,7 @@ then
 fi
 
 # Are we loading plugins?
-if [ "o" == "$download_wp_content" ] || [ "p" == "$download_wp_content" ]
+if [ "o" == "$download_wp_content" ] || [ "p" == "$download_wp_content" ] || [ "a" == "$download_wp_content" ]
 then
 	# install all active plugins based on the `active_plugins` option value
 	# that was just written to the database
@@ -502,6 +538,18 @@ then
 	mv wp-content/plugins/use-mailhog-main wp-content/plugins/use-mailhog
 fi
 wp plugin activate use-mailhog
+
+# Does the site folder have a favicon.ico file?
+if [ ! -f "${SITE[local_path]}favicon.ico" ]
+then
+	# No.
+	# Create a colored circle SVG image.
+	node "${dir}"/client-color-coder.js basename "${SITE[local_path]}" > "${SITE[local_path]}favicon.svg"
+	# Convert the .svg to an .ico.
+	magick convert -density 300 -define icon:auto-resize=256,128,96,64,48,32,16 -background none "${SITE[local_path]}favicon.svg" "${SITE[local_path]}favicon.ico"
+	# Delete the .svg
+	rm "${SITE[local_path]}favicon.svg"
+fi
 
 # Does the site config have a script_after we need to run?
 if [ -v SITE[script_after] ]

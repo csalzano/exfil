@@ -8,8 +8,10 @@ A bash script that extracts production WordPress websites and updates their loca
 
 1. Requires bash 4.2
 	- Associative arrays were introduced in bash 4.0
-	- The `-v` flag used on line 481 `if [ -v SITE[script_after] ]` tests whether an associative array key actually exists was added in bash 4.2.
+	- The `-v` flag used on line 580 `if [ -v SITE[script_after] ]` tests whether an associative array key actually exists was added in bash 4.2.
 2. Requires sshpass for any site configured with ssh_password rather than ssh_remote_key_file.
+3. Requires Node.js to generate a colored circle SVG when creating a missing `favicon.ico` via `client-color-coder.js`.
+4. Requires ImageMagick (`magick`) to convert that SVG into a multi-size `favicon.ico`.
 
 ### Instructions
 
@@ -94,6 +96,16 @@ source ~/Sites/site.conf && cd "${SITE[local_path]}" && eval "${SITE[script_afte
 The `source` loads the conf and populates the `SITE` array. The `cd` puts the shell in the WordPress root so wp-cli targets the right site. Then `eval` runs the commands exactly as exfil would.
 
 ## changelog
+
+### 3.0.0
+
+- __Added__ Generates a unique colored circle `favicon.ico` when a local site does not already have one, using `client-color-coder.js` and ImageMagick.
+- __Added__ File treatment option `b` = Themes, Plugins, and Uploads for both delete and download.
+- __Added__ File treatment option `c` = All of wp-content for delete (download already had this under `a`).
+- __Added__ Download support for Gravity Forms uploads (`ugf`) and for Themes, Plugins, Must-Use Plugins, and Uploads (`a`).
+- __Changed__ Unifies the delete and download prompts so both present the same file treatment options.
+- __Changed__ Moves "All of wp-content" from download option `a` to `c` so `a` means Themes, Plugins, Must-Use Plugins, and Uploads on both prompts.
+- __Fixed__ Favicon color generation always produced the same dark blue. Now derives a full RGB color from the site folder name.
 
 ### 2.2.0
 

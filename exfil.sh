@@ -104,8 +104,9 @@ wp config set DISABLE_WP_CRON true --raw --path="${SITE[local_path]}"
 # u = Uploads
 # ugf = Gravity Forms uploads
 # a = Themes, Plugins, Must-Use Plugins, and Uploads
+# b = Themes, Plugins, and Uploads
 # c = All of wp-content
-file_treatment_options="n = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\nugf = Gravity Forms uploads\na = Themes, Plugins, Must-Use Plugins, and Uploads\nc = All of wp-content"
+file_treatment_options="n = No\nt = Themes\np = Plugins\no = Themes & Plugins\nu = Uploads\nugf = Gravity Forms uploads\na = Themes, Plugins, Must-Use Plugins, and Uploads\nb = Themes, Plugins, and Uploads\nc = All of wp-content"
 
 if [ -z "$delete_wp_content" ]
 then
@@ -147,6 +148,12 @@ case $delete_wp_content in
 		rm -rf "${SITE[local_path]}wp-content/themes/*"
 		rm -rf "${SITE[local_path]}wp-content/plugins/*"
 		rm -rf "${SITE[local_path]}wp-content/mu-plugins/*"
+		rm -rf "${SITE[local_path]}wp-content/uploads/*"
+	;;
+
+	b) # Themes, Plugins, and Uploads
+		rm -rf "${SITE[local_path]}wp-content/themes/*"
+		rm -rf "${SITE[local_path]}wp-content/plugins/*"
 		rm -rf "${SITE[local_path]}wp-content/uploads/*"
 	;;
 
@@ -274,6 +281,15 @@ EOF
 			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
 		;;
 
+		b) # Themes, Plugins, and Uploads
+			echo "Downloading the wp-content/themes folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/plugins folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/uploads folder..."
+			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+		;;
+
 		c) # All of wp-content
 			echo "Downloading the wp-content folder..."
 			sshpass -p "${SITE[ssh_password]}" rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
@@ -369,6 +385,15 @@ EEOF
 			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
 		;;
 
+		b) # Themes, Plugins, and Uploads
+			echo "Downloading the wp-content/themes folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/themes" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/plugins folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/plugins" "${SITE[local_path]}wp-content"
+			echo "Downloading the wp-content/uploads folder..."
+			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content/uploads" "${SITE[local_path]}wp-content"
+		;;
+
 		c) # All of wp-content
 			echo "Downloading the wp-content folder..."
 			rsync -azv -e 'ssh -p '"${SITE[ssh_port]}" "${SITE[ssh_user_at_host]}":"${SITE[production_path]}wp-content" "${SITE[local_path]}"
@@ -459,7 +484,7 @@ then
 fi
 
 # Are we loading plugins?
-if [ "o" == "$download_wp_content" ] || [ "p" == "$download_wp_content" ] || [ "a" == "$download_wp_content" ]
+if [ "o" == "$download_wp_content" ] || [ "p" == "$download_wp_content" ] || [ "a" == "$download_wp_content" ] || [ "b" == "$download_wp_content" ]
 then
 	# install all active plugins based on the `active_plugins` option value
 	# that was just written to the database

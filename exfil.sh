@@ -569,7 +569,7 @@ if [ ! -f "${SITE[local_path]}favicon.ico" ]
 then
 	# No.
 	# Create a colored circle SVG image.
-	node "${dir}"/client-color-coder.js basename "${SITE[local_path]}" > "${SITE[local_path]}favicon.svg"
+	node "${dir}"/client-color-coder.js "$(basename "${SITE[local_path]}")" > "${SITE[local_path]}favicon.svg"
 	# Convert the .svg to an .ico.
 	magick convert -density 300 -define icon:auto-resize=256,128,96,64,48,32,16 -background none "${SITE[local_path]}favicon.svg" "${SITE[local_path]}favicon.ico"
 	# Delete the .svg

@@ -556,6 +556,21 @@ then
 	wp plugin deactivate sg-cachepress
 fi
 
+# Install and activate Minn Admin https://github.com/austinginder/minn-admin
+wp plugin is-installed minn-admin
+if [ 1 == "$?" ]
+then
+	# No.
+	wp plugin install https://github.com/austinginder/minn-admin/archive/refs/heads/main.zip
+	# GitHub zips extract as {repo}-{branch}. Newer WP-CLI already strips that suffix.
+	if [ -d wp-content/plugins/minn-admin-main ]
+	then
+		rm -rf wp-content/plugins/minn-admin
+		mv wp-content/plugins/minn-admin-main wp-content/plugins/minn-admin
+	fi
+fi
+wp plugin activate minn-admin
+
 # Is the Use MailHog plugin active?
 wp plugin is-installed use-mailhog
 if [ 1 == "$?" ]

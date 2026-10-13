@@ -57,6 +57,9 @@ for ARG in "$@"; do
 		--download-themes)
 			download_wp_content="t"
 		;;
+		--download-themes-plugins)
+			download_wp_content="o"
+		;;
 
 		# Keep local .sql file after importing? (y/n).
 		--no-keep-sql)

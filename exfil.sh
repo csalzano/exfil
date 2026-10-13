@@ -562,8 +562,12 @@ if [ 1 == "$?" ]
 then
 	# No.
 	wp plugin install https://github.com/csalzano/use-mailhog/archive/refs/heads/main.zip
-	# Remove the github branch name from the folder.
-	mv wp-content/plugins/use-mailhog-main wp-content/plugins/use-mailhog
+	# GitHub zips extract as {repo}-{branch}. Newer WP-CLI already strips that suffix.
+	if [ -d wp-content/plugins/use-mailhog-main ]
+	then
+		rm -rf wp-content/plugins/use-mailhog
+		mv wp-content/plugins/use-mailhog-main wp-content/plugins/use-mailhog
+	fi
 fi
 wp plugin activate use-mailhog
 
